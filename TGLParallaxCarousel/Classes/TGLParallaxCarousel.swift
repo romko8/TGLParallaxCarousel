@@ -154,6 +154,7 @@ open class TGLParallaxCarousel: UIView {
     // MARK: - setup
     fileprivate func setupGestures() {
         let panGesture: UIPanGestureRecognizer = UIPanGestureRecognizer(target: self, action:#selector(detectPan(_:)))
+        panGesture.cancelsTouchesInView = false
         let tapGesture: UITapGestureRecognizer = UITapGestureRecognizer(target: self, action:#selector(detectTap(_:)))
         mainView.addGestureRecognizer(panGesture)
         mainView.addGestureRecognizer(tapGesture)
@@ -239,19 +240,22 @@ open class TGLParallaxCarousel: UIView {
     
     // MARK: - gestures handler
     @objc func detectPan(_ recognizer:UIPanGestureRecognizer) {
-        //manejo de esto
-        guard abs(recognizer.velocity(in: self).x) > abs(recognizer.velocity(in: self).y) else{
-            return
-        }
+//        //manejo de esto
+//        guard abs(recognizer.velocity(in: self).x) > abs(recognizer.velocity(in: self).y) else{
+//            print("manejo de esto")
+//            return
+//        }
         
         let targetView = recognizer.view
         
         switch recognizer.state {
         case .began:
+            print("began")
             startGesturePoint = recognizer.location(in: targetView)
             currentGestureVelocity = 0
             
         case .changed:
+            print("changed")
             currentGestureVelocity = recognizer.velocity(in: targetView).x
             endGesturePoint = recognizer.location(in: targetView)
             
@@ -261,9 +265,11 @@ open class TGLParallaxCarousel: UIView {
             startGesturePoint = endGesturePoint
             
         case .ended, .cancelled, .failed:
+            print("ended")
             startDecelerating()
             
         case.possible:
+            print("possible")
             break
         }
     }
