@@ -28,6 +28,7 @@ class ViewController: UIViewController {
         carouselView.margin = 10
         carouselView.selectedIndex = 2
         carouselView.type = .threeDimensional
+        carouselView.maxDistance = 20
     }
     
     override var prefersStatusBarHidden : Bool {

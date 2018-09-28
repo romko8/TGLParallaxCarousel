@@ -89,6 +89,7 @@ open class TGLParallaxCarousel: UIView {
         if let _ = itemWidth { return ((itemWidth! + margin) / xDisplacement ) }
         else { return 1}
     }
+    open var maxDistance: CGFloat?
     
     var xDisplacement: CGFloat {
         if type == .normal {
@@ -250,12 +251,10 @@ open class TGLParallaxCarousel: UIView {
         
         switch recognizer.state {
         case .began:
-            print("began")
             startGesturePoint = recognizer.location(in: targetView)
             currentGestureVelocity = 0
             
         case .changed:
-            print("changed")
             currentGestureVelocity = recognizer.velocity(in: targetView).x
             endGesturePoint = recognizer.location(in: targetView)
             
@@ -265,11 +264,9 @@ open class TGLParallaxCarousel: UIView {
             startGesturePoint = endGesturePoint
             
         case .ended, .cancelled, .failed:
-            print("ended")
             startDecelerating()
             
         case.possible:
-            print("possible")
             break
         }
     }
@@ -416,7 +413,20 @@ open class TGLParallaxCarousel: UIView {
     
     fileprivate func decelerationDistance() ->CGFloat {
         let acceleration = -currentGestureVelocity * decelerationMultiplier
-        return (acceleration == 0) ? 0 : (-pow(currentGestureVelocity, 2.0) / (2.0 * acceleration))
+        var distance = (acceleration == 0) ? 0 : (-pow(currentGestureVelocity, 2.0) / (2.0 * acceleration))
+
+        if let maxDistance = self.maxDistance {
+            if distance > 0 {
+                if distance > maxDistance {
+                    distance = maxDistance
+                }
+            } else {
+                if distance < -maxDistance {
+                    distance = -maxDistance
+                }
+            }
+        }
+        return distance
     }
     
     
